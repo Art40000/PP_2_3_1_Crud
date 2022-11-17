@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Users list</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+</head>
+<body>
+<h3>User List</h3>
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Name</th>
+    <th scope="col">LastName</th>
+    <th scope="col">Age</th>
+    <th scope="col">Edit</th>
+    <th scope="col">Delete</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="leafListUsers : ${listUsers}">
+    <td th:text="${leafListUsers.getName()}"/>
+    <td th:text="${leafListUsers.getLastname()}"/>
+    <td th:text="${leafListUsers.getAge()}"/>
+    <td><a th:href="@{userdata/{id}(id=${leafListUsers.getId()})}">Edit</a></td>
+    <td><a th:href="@{remove/{id}(id=${leafListUsers.getId()})}">Delete</a></td>
+
+  </tr>
+  </tbody>
+
+</table>
+<form>
+  <button>
+    <a href="userdata">Add User</a>
+  </button>
+</form>
+
+</div>
+</body>
+</html></html>
