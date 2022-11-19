@@ -10,9 +10,11 @@ import web.service.UserService;
 @Controller
 public class UserController{
     private UserService userService;
+    int id;
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+        id = 0;
     }
 
     @GetMapping (value = "/users")
@@ -21,29 +23,35 @@ public class UserController{
         return "/users";
     }
 
-    @RequestMapping(value = "/userdata", method = RequestMethod.GET)
+    @GetMapping(value = "/userdata")
     public String addUser(Model model){
         User user  = new User();
         model.addAttribute("user", user);
+        id = 0;
         return "/userdata";
     }
 
-    @RequestMapping(value =  "/userdata" , method = RequestMethod.POST)
-    public String saveUser(Model model, @ModelAttribute("user") User user) {
-        this.userService.add(user);
+    @PostMapping(value =  "/userdata")
+    public String saveUser(@ModelAttribute("user") User user) {
+        if (id==0) {
+            userService.add(user);
+        } else {
+            userService.update(user, userService.getUserById(id));
+            id = 0;
+        }
         return "redirect:/users";
     }
 
-    @RequestMapping("/remove/{id}")
+    @GetMapping("/remove/{id}")
     public String remove(@PathVariable("id") int id){
-        this.userService.remove(id);
+        userService.remove(id);
         return "redirect:/users";
     }
 
-    @RequestMapping("/userdata/{id}")
+    @GetMapping("/userdata/{id}")
     public String userData(@PathVariable("id") int id, Model model){
-        model.addAttribute("user", this.userService.getUserById(id));
-        this.userService.remove(id);
+        model.addAttribute("user", userService.getUserById(id));
+        this.id = id;
         return "/userdata";
     }
 }

@@ -8,49 +8,53 @@ import java.util.List;
 
 @Repository
 public class UserDAOImpl implements UserDAO{
-    @PersistenceUnit
-    private EntityManagerFactory emf;
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public void add(User user) {
-        if(this.getUser(user) == null){
-            this.emf.createEntityManager().unwrap(Session.class).save(user);
+        if(!doesThisUserExist(user)){
+            em.unwrap(Session.class).save(user);
         }
     }
     @Override
     public void remove(int id) {
-        EntityManager em = emf.createEntityManager();
         User user = em.find(User.class, id);
-        if(user!=null){
-            em.getTransaction().begin();
-            em.remove(user);
-            em.getTransaction().commit();
+        em.remove(user);
+    }
+
+    @Override
+    public void update(User fromUser, User toUser) {
+        if(!doesThisUserExist(fromUser)) {
+            toUser.setName(fromUser.getName());
+            toUser.setLastname(fromUser.getLastname());
+            toUser.setAge((fromUser.getAge()));
+            em.merge(toUser);
         }
     }
 
     @Override
     public User getUserById(int id) {
-       return emf.createEntityManager().find(User.class, id);
+       return em.find(User.class, id);
     }
 
     @Override
     public List<User> getAllUsers() {
-        return this.emf.createEntityManager().unwrap(Session.class).createQuery("from User").getResultList();
+        return em.unwrap(Session.class).createQuery("from User").getResultList();
     }
 
     @Override
-    public User getUser(User user) {
-        Session session = emf.createEntityManager().unwrap(Session.class);
-        User res = null;
+    public boolean doesThisUserExist(User user) {
+        Session session = em.unwrap(Session.class);
         String hql = "from User where name = :nm and lastname = :ln and age = :ag";
         TypedQuery<User> query=session.createQuery(hql).
                 setParameter("nm", user.getName()).setParameter("ln", user.getLastname()).
                     setParameter("ag", user.getAge());
         try {
-            res = query.getSingleResult();
+            query.getSingleResult();
         } catch (NoResultException e) {
-            return null;
+            return false;
         }
-        return res;
+        return true;
     }
 }

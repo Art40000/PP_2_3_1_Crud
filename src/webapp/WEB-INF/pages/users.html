@@ -11,6 +11,7 @@
 <table class="table table-hover">
   <thead>
   <tr>
+    <th scope="col">id</th>
     <th scope="col">Name</th>
     <th scope="col">LastName</th>
     <th scope="col">Age</th>
@@ -20,6 +21,7 @@
   </thead>
   <tbody>
   <tr th:each="leafListUsers : ${listUsers}">
+    <td th:text="${leafListUsers.getId()}"/>
     <td th:text="${leafListUsers.getName()}"/>
     <td th:text="${leafListUsers.getLastname()}"/>
     <td th:text="${leafListUsers.getAge()}"/>
